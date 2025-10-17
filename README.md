@@ -1,54 +1,91 @@
-# React + TypeScript + Vite
+# Product Admin Dashboard — Client (React + TypeScript + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for a products admin dashboard. This client consumes a REST API and provides CRUD operations for products (list, create, edit, delete, toggle availability). Built with React 19, Vite 6, TypeScript, React Router, Tailwind CSS, Axios, and Valibot for runtime validation.
 
-Currently, two official plugins are available:
+Live app: https://restapistypescriptfrontend.vercel.app/
+Related backend (external): https://github.com/aaronmasm/Uptask_Backend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Note: This README documents this repository (the client). The linked backend is a separate project.
 
-## Expanding the ESLint configuration
+## Stack
+- Language: TypeScript
+- Framework/Library: React 19
+- Build tool/dev server: Vite 6 (@vitejs/plugin-react-swc)
+- Styling: Tailwind CSS 4
+- Router: react-router-dom 7
+- HTTP client: axios
+- Validation: valibot
+- Linting/formatting: ESLint + typescript-eslint, Prettier
+- Deployment config: Vercel (vercel.json SPA rewrites)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Requirements
+- Node.js 18+ (required by Vite 6)
+- npm (package-lock.json present)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
+## Getting started
+1. Clone and install dependencies
+   - npm install
+2. Configure environment variables (see Environment variables below)
+3. Start the dev server
+   - npm run dev
+4. Build for production
+   - npm run build
+5. Preview the production build locally
+   - npm run preview
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
+- npm run dev — Start Vite dev server with HMR
+- npm run build — Type-check (tsc -b) and build with Vite
+- npm run preview — Preview the production build locally
+- npm run lint — Run ESLint
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+## Environment variables
+This project uses Vite env vars (must be prefixed with VITE_):
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    "react-x": reactX,
-    "react-dom": reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs["recommended-typescript"].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
-```
+- VITE_API_URL — Base URL of the backend API.
+  - Example (development): http://localhost:5000
+  - Local override file example: create .env.local with VITE_API_URL=http://localhost:5000
+
+Env files are not committed. See .env.local in this repo as an example of the required variable in development.
+
+## Entry points and routing
+- HTML entry: index.html (mounts #root and loads src/main.tsx)
+- App entry: src/main.tsx (creates root and mounts RouterProvider)
+- Router: src/router.tsx with routes for:
+  - / — Product list (loader fetches products; action toggles availability)
+  - /productos/nuevo — Create product (action posts new product)
+  - /productos/:id/editar — Edit product (loader fetches product; action updates)
+  - /productos/:id/eliminar — Delete product (action deletes)
+
+## API service
+- src/services/productService.ts uses axios and VITE_API_URL to call the REST API under /api/products
+
+## Project structure (selected)
+- index.html — App HTML shell
+- src/
+  - main.tsx — App bootstrap
+  - router.tsx — Route configuration
+  - index.css — Global styles (Tailwind CSS)
+  - layouts/
+    - Layout.tsx — App layout and header
+  - components/
+    - ProductForm.tsx, ProductDetails.tsx, ErrorMessage.tsx
+  - views/
+    - Products.tsx, NewProduct.tsx, EditProduct.tsx
+  - services/
+    - productService.ts — API calls
+  - types/
+    - index.ts — Valibot schemas and Product type
+  - utils/ (if present) — Utility helpers (e.g., toBoolean)
+- vite.config.ts — Vite configuration (React SWC + Tailwind CSS plugins)
+- vercel.json — SPA routing for Vercel deploys
+- eslint.config.js — ESLint configuration
+- tsconfig*.json — TypeScript configs
+
+## Development notes
+- Tailwind CSS 4 is enabled via the @tailwindcss/vite plugin in vite.config.ts.
+- React Router Data APIs (loader/action) are used for data fetching and mutations per route.
+- All network requests derive their base from VITE_API_URL to avoid hardcoding.
+
+## License
+This project is licensed under the MIT License — see the LICENSE file for details.
